@@ -14,4 +14,4 @@ int main(int argc, char*argv[])
 	//run fsm
 	//buscar errores
 	//Done!
-	
+}

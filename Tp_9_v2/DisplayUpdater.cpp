@@ -32,6 +32,7 @@ DisplayUpdater::~DisplayUpdater()
 void DisplayUpdater::setTweets(vector<Tweet>& tweetList)
 {
 	internalTweetList = tweetList;
+	setNextTweet();//guardo el primer tweet para mostrar
 }
 
 void DisplayUpdater::incSpeed()
@@ -140,7 +141,46 @@ void DisplayUpdater::setNextTweet(void)
 	string name = internalTweetList[tweetNum].getTwitter();
 	string content = internalTweetList[tweetNum].getTweet();
 	
-	secondLine = name + string(":- ") + content + string("-                "); // el ultimo es para que quede el display vacio
+	for (int i = 0; i<name.length();i++)
+	{
+		switch (name[i])
+		{
+		case 'á': name[i] = 'a'; break;
+		case 'é': name[i] = 'e'; break;
+		case 'í': name[i] = 'i'; break;
+		case 'ó': name[i] = 'o'; break;
+		case 'ú': name[i] = 'u'; break;
+		case 'ñ': name[i] = 'n'; break;
+		case 'Á': name[i] = 'A'; break;
+		case 'É': name[i] = 'E'; break;
+		case 'Í': name[i] = 'I'; break;
+		case 'Ó': name[i] = 'O'; break;
+		case 'Ú': name[i] = 'U'; break;
+		case 'Ñ': name[i] = 'N'; break;
+		default: break;
+		}
+	}
+	for (int i = 0; i < content.length(); i++)
+	{
+		switch (content[i])
+		{
+		case 'á': content[i] = 'a'; break;
+		case 'é': content[i] = 'e'; break;
+		case 'í': content[i] = 'i'; break;
+		case 'ó': content[i] = 'o'; break;
+		case 'ú': content[i] = 'u'; break;
+		case 'ñ': content[i] = 'n'; break;
+		case 'Á': content[i] = 'A'; break;
+		case 'É': content[i] = 'E'; break;
+		case 'Í': content[i] = 'I'; break;
+		case 'Ó': content[i] = 'O'; break;
+		case 'Ú': content[i] = 'U'; break;
+		case 'Ñ': content[i] = 'N'; break;
+		default: break;
+		}
+	}
+	
+	secondLine = name + string(": - ") + content + string(" -                "); // el ultimo es para que quede el display vacio
 	
 	content = internalTweetList[tweetNum].getTweetedAt();
 	content.erase(content.find_last_of(' ') - 5, 5); // le saco la parte del uso horario
