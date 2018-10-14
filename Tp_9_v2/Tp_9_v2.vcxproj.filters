@@ -27,9 +27,6 @@
     <ClInclude Include="ParseCMD.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Parser.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Tweet.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -87,9 +84,6 @@
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
     <ClCompile Include="ParseCMDCallback.cpp">
-      <Filter>Archivos de recursos</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser.cpp">
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
     <ClCompile Include="Tweet.cpp">

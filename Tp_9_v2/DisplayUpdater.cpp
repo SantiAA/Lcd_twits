@@ -1,14 +1,17 @@
 #include "DisplayUpdater.h"
+#include "Display/HD44780LCD.h"
 #include <ctime>
 #include <iomanip>
 #include <sstream>
 #include <iostream>
 
+#define _CRT_SECURE_NO_WARNINGS
 
 
-
-DisplayUpdater::DisplayUpdater(BasicLCD * display, int fps)
+DisplayUpdater::DisplayUpdater( int fps)
 {
+	BasicLCD * display = getDisplay();
+
 	if (display->lcdInitOk())
 	{
 		lcd = display;
@@ -27,6 +30,7 @@ DisplayUpdater::DisplayUpdater(BasicLCD * display, int fps)
 
 DisplayUpdater::~DisplayUpdater()
 {
+	delete lcd;
 }
 
 void DisplayUpdater::setTweets(vector<Tweet>& tweetList)
@@ -54,9 +58,9 @@ void DisplayUpdater::repeatTweet()
 	rRate = speed;
 }
 
-bool DisplayUpdater::refreshDisplay(void)
+void DisplayUpdater::refreshDisplay(void)
 {
-	bool ret = true;
+	//bool ret = true;
 	if (rRate - 1 == 0) // me fijo si el contador llego a 0
 	{
 		lcd->lcdClear(); //limprio el display
@@ -68,7 +72,7 @@ bool DisplayUpdater::refreshDisplay(void)
 		{
 			if (tweetNum >= internalTweetList.size())
 			{
-				ret = false; // termine de mostrar todos lo tweets
+				termine = false; // termine de mostrar todos lo tweets
 			}
 			else
 			{
@@ -84,7 +88,7 @@ bool DisplayUpdater::refreshDisplay(void)
 	else
 		rRate--;
 
-	return ret;
+	
 
 }
 
@@ -212,6 +216,11 @@ void DisplayUpdater::setNextTweet(void)
 	tweetNum++;
 }
 
+bool DisplayUpdater::finished()
+{
+	return !termine;
+}
+
 bool DisplayUpdater::isOk()
 {
 	if (posibleErr.get_type() != ErrType::LCD_NO_ERROR)
@@ -225,4 +234,10 @@ bool DisplayUpdater::isOk()
 std::string DisplayUpdater::getError()
 {
 	return posibleErr.get_description();
+}
+
+
+BasicLCD * getDisplay(void)
+{
+	return new HD44780LCD();
 }
