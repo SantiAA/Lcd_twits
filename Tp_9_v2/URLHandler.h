@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <curl.h>
+#include <curl/curl.h>
 #include "URLError.h"
 
 using namespace std;
