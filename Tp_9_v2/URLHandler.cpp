@@ -1,6 +1,8 @@
 #include "URLHandler.h"
 #include <functional>
 
+#define _CRT_SECURE_NO_WARNINGS
+
 // Callback function to register curl's response.
 static size_t curlCallback(void *contents, size_t size, size_t nmemb, void *userp);
 
@@ -11,7 +13,7 @@ URLHandler::URLHandler() : err()
 	err.setErrType(ErrType::ERR_NO_URL_GIVEN);		// When initialised without a URL, an error is raised, making sure to remind the user that he must set a URL manually.
 }
 
-URLHandler::URLHandler(char * URL_) : err()
+URLHandler::URLHandler(const char * URL_) : err()
 {
 	setURL(URL_);
 	stillReceiving = 0;
@@ -23,7 +25,7 @@ URLHandler::~URLHandler()
 {
 }
 
-void URLHandler::setURL(char * URL_)
+void URLHandler::setURL(const char * URL_)
 {
 	URL = URL_;
 	err.setErrType(ErrType::NO_ERRORS);
@@ -51,7 +53,7 @@ bool URLHandler::easyPerform()
 	}
 }
 
-bool URLHandler::easyPerform(char * password)
+bool URLHandler::easyPerform(const char * password)
 {
 	curl = curl_easy_init();		// Initialising curl.
 	response = "";					// Initialising response string.
@@ -62,13 +64,13 @@ bool URLHandler::easyPerform(char * password)
 		curl_easy_setopt(curl, CURLOPT_USERPWD, password);
 
 		struct curl_slist * list = NULL;													// List for setting up a header.
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);									// Telling CURL we're sending coded URLs and in	UTF8 format. This automatically codes our password.
 		list = curl_slist_append(list, "Content-Type: application/x-www-form-urlencoded;charset=UTF-8");
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);									// Telling CURL we're sending coded URLs and in	UTF8 format. This automatically codes our password.
 
 		string data = "grant_type=client_credentials";
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.size());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());							// Telling CURL we're working with credentials.
-
+		
 		return basicEasyPerform();
 	}
 	else
@@ -98,7 +100,7 @@ bool URLHandler::setUpMultiPerform()
 	}
 }
 
-bool URLHandler::setUpMultiPerform(char * header)
+bool URLHandler::setUpMultiPerform(const char * header)
 {
 	curl = curl_easy_init();								// Initialising curl.
 	multiHandle = curl_multi_init();						// Initialising multiHandle.
@@ -110,7 +112,7 @@ bool URLHandler::setUpMultiPerform(char * header)
 		struct curl_slist * list = NULL;													// List for setting up a header.
 		list = curl_slist_append(list, header);
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);									// Telling curl we're adding a header.
-
+		
 		return basicSetUpMultiPerform();
 	}
 	else
@@ -165,7 +167,7 @@ URLError URLHandler::getError()
 
 bool URLHandler::basicEasyPerform()
 {
-	curl_easy_setopt(curl, CURLOPT_URL, URL);											// Setting URL we will connect to.
+	curl_easy_setopt(curl, CURLOPT_URL, URL.c_str());											// Setting URL we will connect to.
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);									// Telling CURL to follow redirection in case page we visit redirects us somewhere else.
 	curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);		// Telling CURL to work with either HTTP or HTTPS.
 
@@ -176,6 +178,7 @@ bool URLHandler::basicEasyPerform()
 	if (easyRes != CURLE_OK)
 	{
 		err.setErrType(ErrType::ERR_WHILE_EASY_PERFORM);
+		err.setErrDetail(curl_easy_strerror(easyRes));
 		curl_easy_cleanup(curl);
 		return false;
 	}
@@ -188,11 +191,11 @@ bool URLHandler::basicSetUpMultiPerform()
 {
 	curl_multi_add_handle(multiHandle, curl);			// Attaching easy handle to multi handle to perform non blocking.
 
-	curl_easy_setopt(curl, CURLOPT_URL, URL);											// Setting URL we will connect to.
+	curl_easy_setopt(curl, CURLOPT_URL, URL.c_str());											// Setting URL we will connect to.
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);									// Telling CURL to follow redirection in case page we visit redirects us somewhere else.
 	curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);		// Telling CURL to work with either HTTP or HTTPS.
 
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlCallback);					// Specifying callback function to be called when curl has to write the response.
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlCallback);						// Specifying callback function to be called when curl has to write the response.
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);								// Specifying "response" as the parameter to be passed to callback function as user data.
 
 	return true;

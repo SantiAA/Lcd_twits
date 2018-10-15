@@ -1,6 +1,6 @@
 #include "TweetHandler.h"
 
-#define API_KEY "7s8uvgQnJqjJDqA6JsLIFp90FcOaoR5Ic41LWyHOic0Ht3SRJ6"
+#define API_KEY "HCB39Q15wIoH61KIkY5faRDf6"
 #define API_SECRET_KEY "7s8uvgQnJqjJDqA6JsLIFp90FcOaoR5Ic41LWyHOic0Ht3SRJ6"
 
 
@@ -11,7 +11,7 @@ TweetHandler::TweetHandler() : tweetsList(), TwitterAnswer()
 	setTweetsAmount(0);
 }
 
-TweetHandler::TweetHandler(char * account_, int tweetsN_) : tweetsList(), TwitterAnswer()
+TweetHandler::TweetHandler(const char * account_, int tweetsN_) : tweetsList(), TwitterAnswer()
 {
 	APIKey = API_KEY;
 	APISecretKey = API_SECRET_KEY;
@@ -26,7 +26,7 @@ TweetHandler::~TweetHandler()
 {
 }
 
-void TweetHandler::setAccountSource(char * account_)
+void TweetHandler::setAccountSource(const char * account_)
 {
 	account = account_;
 }
@@ -38,14 +38,31 @@ void TweetHandler::setTweetsAmount(int tweetsN_)
 
 bool TweetHandler::createTwitterToken()
 {
+	setURL("https://api.twitter.com/oauth2/token");
 	string password = APIKey + ":" + APISecretKey;
-	return easyPerform((char *)password.c_str());		// Executing an easyPerform to get the token using a password.
+	bool ret = easyPerform(password.c_str());		// Executing an easyPerform to get the token using a password.
+
+	TwitterAnswer = json::parse(response);
+	try
+	{
+		string aux = TwitterAnswer["access_token"];
+		token = aux;
+	}
+	catch (exception& e)
+	{
+		err.setErrType(ErrType::CHILD_ERROR);
+		err.setErrDetail(string("Exception raised while parsing Twitter's JSON.") + e.what());
+		return false;
+	}
+
+	updateURL();
+	return ret;
 }
 
 void TweetHandler::updateURL()
 {
 	initQuery();
-	setURL((char *)query.c_str());						// Setting URL with parent method.
+	setURL(query.c_str());						// Setting URL with parent method.
 }
 
 bool TweetHandler::setUpTwitterConnection()
@@ -56,9 +73,9 @@ bool TweetHandler::setUpTwitterConnection()
 	}
 	else
 	{
-		string aux = "Authorisation: Bearer ";
+		string aux = "Authorization: Bearer ";
 		aux += token;
-		setUpMultiPerform((char *)aux.c_str());				// Setting up multi perform with the authentication header as specified by Twitter, using the token.
+		setUpMultiPerform(aux.c_str());				// Setting up multi perform with the authentication header as specified by Twitter, using the token.
 		return true;
 	}
 }
@@ -74,8 +91,8 @@ vector<Tweet> TweetHandler::getTweetsList()
 			int extended = tweet.find("https");
 			tweet = tweet.substr(0, extended);			// The URL to continue reading the tweet gets eliminated.
 
-			string twitter = tweetElement["screen_name"];
 			string tweetedAt = tweetElement["created_at"];
+			string twitter = tweetElement["user"]["name"];
 
 			tweetsList.push_back(Tweet(tweet, twitter, tweetedAt));
 		}

@@ -13,10 +13,10 @@ class TweetHandler :
 {
 public:
 	TweetHandler();
-	TweetHandler(char * account_, int tweetsN_ = 0);
+	TweetHandler(const char * account_, int tweetsN_ = 0);
 	virtual ~TweetHandler();
 
-	void setAccountSource(char * account_);
+	void setAccountSource(const char * account_);
 	void setTweetsAmount(int tweetsN_);
 	// To be called after setting new account and/or tweetsN. If constructed with constructor by default, this method bust be called so that there are no errors.
 	void updateURL();
@@ -60,11 +60,12 @@ HOW TO IMPLEMENT THIS CLASS:
 4. Set up Twitter connection with setUpTwitterConnection().
 
 5. Write the following while loop:
-	while (isStillReceiving())
+
+	do
 	{
-		myTweetHandler.multiPerform();
+		testHandler.multiPerform();
 		// Here you can do whatever you want.
-	}
+	} while (testHandler.isStillReceiving());
 
 6. Get the information you want with getTweetsList().
 

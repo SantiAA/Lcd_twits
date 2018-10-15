@@ -11,21 +11,21 @@ class URLHandler
 {
 public:
 	URLHandler();
-	URLHandler(char * URL_);
+	URLHandler(const char * URL_);
 	virtual ~URLHandler();
 
-	void setURL(char * URL_);
+	void setURL(const char * URL_);
 
 	char * getResponse();
 
 	// This is a blocking perform.
 	bool easyPerform();
 	// For cases when password is needed, like asking for a token. This is a blocking perform.
-	bool easyPerform(char * password);
+	bool easyPerform(const char * password);
 	// This is for the set up of the non blocking perform.
 	bool setUpMultiPerform();
 	// For cases when a header is needed. This is for the set up of the non blocking perform.
-	bool setUpMultiPerform(char * header);
+	bool setUpMultiPerform(const char * header);
 	// Non blocking perform. Should be called in a while look while asking isStillReceiving().
 	bool multiPerform();
 	// To be asked in a while loop while multi performing.
