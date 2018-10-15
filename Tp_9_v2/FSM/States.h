@@ -27,7 +27,7 @@ class InitState : public SC::simple_state<InitState, TwitterFSM>
 {
 public:
 	InitState();
-	typedef SC::transition<StartEvent, ParsingCMD> reactions;
+	typedef SC::transition<StartEvent, WaitingForTweets> reactions;
 	
 };
 
