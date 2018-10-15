@@ -19,6 +19,8 @@ public:
 	void incSpeed();
 	void decSpeed();
 	void repeatTweet();
+	void next();
+	void prev();
 
 	void refreshDisplay(void);
 
