@@ -5,8 +5,8 @@
 #include <sstream>
 #include <iostream>
 
-#define _CRT_SECURE_NO_WARNINGS
 
+BasicLCD * getDisplay();
 
 DisplayUpdater::DisplayUpdater( int fps)
 {
@@ -18,7 +18,7 @@ DisplayUpdater::DisplayUpdater( int fps)
 	}
 	else
 	{
-		posibleErr.set_type(ErrType::LCD_NOT_FOUND);
+		posibleErr.set_type(ErrrType::LCD_NOT_FOUND);
 	}
 	speed = fps/2; //depende de los fps, inicialmente es dos veces por segundo (capaz es mucho)
 	rRate = speed;
@@ -296,7 +296,7 @@ bool DisplayUpdater::finished()
 
 bool DisplayUpdater::isOk()
 {
-	if (posibleErr.get_type() != ErrType::LCD_NO_ERROR)
+	if (posibleErr.get_type() != ErrrType::LCD_NO_ERROR)
 	{
 		return false;
 	}

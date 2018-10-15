@@ -23,10 +23,10 @@ class End;
 
 
 
-class InitState : public SC::simple_state<InitState, TwitterFSM>
+class IniState : public SC::simple_state<IniState, TwitterFSM>
 {
 public:
-	InitState();
+	IniState();
 	typedef SC::transition<StartEvent, WaitingForTweets> reactions;
 	
 };
@@ -42,7 +42,7 @@ public:
 		SC::custom_reaction<EventDoneTweets>,
 		SC::custom_reaction<ErrorEvent>,
 		SC::custom_reaction<EventQuit>
-	>reactions;
+	>react;
 	SC::result refreshReaction(const EventRefresh& event);	//reacciones para cada evento
 	SC::result doneReaction(const EventDoneTweets& event);
 	SC::result errorReaction(const ErrorEvent& event);
@@ -63,7 +63,7 @@ public:
 		SC::custom_reaction<EventDecSpeed>,
 		SC::custom_reaction<EventLast>,
 		SC::custom_reaction<ErrorEvent>
-	>reactions;
+	>react;
 	SC::result refreshReaction(const EventRefresh& event);			//reacciones para cada evento
 	SC::result nextReaction(const EventNext& event);
 	SC::result previousReaction(const EventPrevious& event);

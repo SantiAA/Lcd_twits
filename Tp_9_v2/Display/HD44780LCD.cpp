@@ -14,10 +14,10 @@ HD44780LCD::HD44780LCD(): err()
 	try
 	{
 		handler = new FTDIHandler();			// Trying to create a FTDIHandler object. This can throw an ErrType exception.
-		err.set_type(ErrType::LCD_NO_ERROR);	// Since there's no errors
+		err.set_type(ErrrType::LCD_NO_ERROR);	// Since there's no errors
 		lcdUpdateCursor(0);								// Initialization of cursor position pointer.
 	}
-	catch (ErrType type_)
+	catch (ErrrType type_)
 	{
 		err.set_type(type_);
 	}
@@ -32,7 +32,7 @@ HD44780LCD::~HD44780LCD()
 bool HD44780LCD::lcdInitOk()
 // This function is meant to be called after creating an HD44780LCD object, to check if everything is ok.
 {
-	if (err.get_type() == ErrType::LCD_NO_ERROR)
+	if (err.get_type() == ErrrType::LCD_NO_ERROR)
 	{
 		return true;
 	}
@@ -59,7 +59,7 @@ bool HD44780LCD::lcdClear()
 		lcdUpdateCursor(LCD_FIRST_POS);
 		return true;
 	}
-	catch (ErrType type_)
+	catch (ErrrType type_)
 	{
 		err.set_type(type_);
 		return false;
@@ -86,7 +86,7 @@ bool HD44780LCD::lcdClearToEOL()
 		}
 		return true;
 	}
-	catch (ErrType type_)
+	catch (ErrrType type_)
 	{
 		err.set_type(type_);
 		return false;
@@ -127,7 +127,7 @@ bool HD44780LCD::lcdMoveCursorUp()
 		lcdUpdateCursor(LSN_MASK(cadd));
 		return true;
 	}
-	catch (ErrType type_)
+	catch (ErrrType type_)
 	{
 		err.set_type(type_);
 		return false;
@@ -142,7 +142,7 @@ bool HD44780LCD::lcdMoveCursorDown()
 		lcdUpdateCursor(cadd | 0x10);
 		return true;
 	}
-	catch (ErrType type_)
+	catch (ErrrType type_)
 	{
 		err.set_type(type_);
 		return false;
@@ -159,7 +159,7 @@ bool HD44780LCD::lcdMoveCursorRight()
 			lcdUpdateCursor(cadd + 1);
 			return true;
 		}
-		catch (ErrType type_)
+		catch (ErrrType type_)
 		{
 			err.set_type(type_);
 			return false;
@@ -174,7 +174,7 @@ bool HD44780LCD::lcdMoveCursorRight()
 			lcdUpdateCursor(LCD_FIRST_POS);
 			return true;
 		}
-		catch (ErrType type_)
+		catch (ErrrType type_)
 		{
 			err.set_type(type_);
 			return false;
@@ -192,7 +192,7 @@ bool HD44780LCD::lcdMoveCursorLeft()
 			lcdUpdateCursor(cadd - 1);
 			return true;
 		}
-		catch (ErrType type_)
+		catch (ErrrType type_)
 		{
 			err.set_type(type_);
 			return false;
@@ -207,7 +207,7 @@ bool HD44780LCD::lcdMoveCursorLeft()
 			lcdUpdateCursor(LCD_LAST_POS);
 			return true;
 		}
-		catch (ErrType type_)
+		catch (ErrrType type_)
 		{
 			err.set_type(type_);
 			return false;
