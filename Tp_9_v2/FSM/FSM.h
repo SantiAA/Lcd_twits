@@ -6,6 +6,7 @@
 #include<boost/statechart/transition.hpp>
 #include<boost/statechart/custom_reaction.hpp>
 #include"Events.h"
+#include"../EventGenerator.h"
 //#include "States.h"
 #include"../TweetHandler.h"
 #include"../DisplayUpdater.h"
@@ -22,10 +23,13 @@ public:
 	TwitterFSM( TweetHandler* handler_, DisplayUpdater* updater_); //recibe tambien puntero a clase de facu, puntero a clase de santi 
 	TweetHandler* getHandler();
 	DisplayUpdater* getUpdater();
+	void step();
+	bool FSMdone();
 
 
 private:
 	TweetHandler* handler;
 	DisplayUpdater* updater;
-	
+	EventGenerator eventGenerator;
+	bool done;
 };
