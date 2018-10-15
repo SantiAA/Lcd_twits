@@ -25,6 +25,8 @@ DisplayUpdater::DisplayUpdater( int fps)
 	state = 0;
 	internalTweetList.clear();
 	tweetNum = 0;
+	waitMoving = false;
+	direction = false;
 }
 
 
@@ -37,6 +39,12 @@ void DisplayUpdater::setTweets(vector<Tweet>& tweetList)
 {
 	internalTweetList = tweetList;
 	setNextTweet();//guardo el primer tweet para mostrar
+}
+
+void DisplayUpdater::showError(string & error_) // procurar errores de 32 chars
+{
+	lcd->lcdClear();
+	lcd->operator<<((const unsigned char * )error_.c_str());
 }
 
 void DisplayUpdater::incSpeed()
@@ -60,7 +68,6 @@ void DisplayUpdater::repeatTweet()
 
 void DisplayUpdater::refreshDisplay(void)
 {
-	//bool ret = true;
 	if (rRate - 1 == 0) // me fijo si el contador llego a 0
 	{
 		lcd->lcdClear(); //limprio el display
@@ -88,23 +95,60 @@ void DisplayUpdater::refreshDisplay(void)
 	else
 		rRate--;
 
-	
-
 }
 
 void DisplayUpdater::setWaiting(std::string accountName)
 {
 	size_t length = accountName.length();
 	lcd->lcdClear();
-	for (size_t i = 0; i < (16 - length) / 2; i++) // para mostrar el nombre centrado
+	if (length <= 16)
 	{
-		lcd->lcdMoveCursorRight();
+		for (size_t i = 0; i < (16 - length) / 2; i++) // para mostrar el nombre centrado
+		{
+			lcd->lcdMoveCursorRight();
+		}
+		lcd->operator<<((const unsigned char *)accountName.c_str());
 	}
-	lcd->operator<<((const unsigned char *)accountName.c_str());
+	else
+	{
+		waitMoving = true;
+		firstLine = accountName;
+		lcd->operator<<((const unsigned char *)firstLine.substr(0,16).c_str());
+		secondLinePos = 1; // lo uso para marcar en que parte estoy
+	}
 }
 
 void DisplayUpdater::stillWaiting(void)
 {
+	if (waitMoving && (rRate == 1)) //Si el nombre es muy largo lo muevo como marquesina
+	{
+		lcd->lcdClear();
+		lcd->operator<<((const unsigned char *)firstLine.substr(secondLinePos, 16).c_str());
+		
+		if (direction) //true derecha
+		{
+			if (secondLinePos >= 1) // todavia tengo para moverme a la derecha
+			{
+				secondLinePos--;
+			}
+			else
+			{
+				direction = !direction;
+			}
+		}
+		else //false izquierda
+		{
+			if (firstLine.length() - secondLinePos - 1 >= 16) // si me quedan mas de 16 caracteres sigo moviendo 
+			{
+				secondLinePos++;
+			}
+			else
+			{
+				direction = !direction;// cambio de direccion
+			}
+		}
+	}
+
 	cursorPosition cur = { 2,0 };
 	if (rRate == 1)
 	{

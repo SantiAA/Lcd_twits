@@ -50,5 +50,8 @@ private:
 
 	char tweetNum;
 	char state;
+
+	bool waitMoving;
+	bool direction; //true derecha, false izq
 };
 
