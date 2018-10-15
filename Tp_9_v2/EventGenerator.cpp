@@ -18,9 +18,9 @@ EventGenerator::~EventGenerator()
 
 void EventGenerator::generateEvents()
 {
-	if (kbhit())
+	if (_kbhit())
 	{
-		int pressedKey = getch();
+		int pressedKey = _getch();
 		switch (pressedKey)
 		{
 		case 's':
@@ -47,9 +47,9 @@ void EventGenerator::generateEvents()
 	}
 	else if(!al_is_event_queue_empty(eventQueue))
 	{
-		ALLEGRO_EVENT* ev;
-		al_get_next_event(eventQueue, ev);
-		if (ev->type == ALLEGRO_EVENT_TIMER)
+		ALLEGRO_EVENT ev;
+		al_get_next_event(eventQueue, &ev);
+		if (ev.type == ALLEGRO_EVENT_TIMER)
 		{
 			FSM->process_event(EventRefresh());
 		}
@@ -99,6 +99,7 @@ bool EventGenerator::initAllegro()
 		err.setErrDetail( "La inicializacion de allegro ha fallado");
 		answer = false;
 	}
+	return answer;
 }
 
 void EventGenerator::deInitAllegro()

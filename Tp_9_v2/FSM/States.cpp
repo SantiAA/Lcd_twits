@@ -1,7 +1,9 @@
 #include "States.h"
+//#include "FSM.h"
+
 using namespace std;
 /*INIT STATE*/
-InitState::InitState()
+IniState::IniState()
 {
 	cout << "Init State"<<endl;
 }
@@ -84,7 +86,7 @@ SC::result DisplayingTweets::incSpeedReaction(const EventIncSpeed & event)
 
 SC::result DisplayingTweets::decSpeedReaction(const EventDecSpeed & event)
 {
-	context<TwitterFSM>().getUpdater()->decSpeed;//disminuir la velocidad del timer
+	context<TwitterFSM>().getUpdater()->decSpeed();//disminuir la velocidad del timer
 	return transit<DisplayingTweets>();
 }
 

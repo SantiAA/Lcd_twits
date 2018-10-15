@@ -9,10 +9,10 @@ using namespace std;
 
 int main(int argc, char*argv[])
 {
-	TwitterFSM myFsm;
+	//TwitterFSM myFsm;
 	
 	
-	myFsm.process_event(EventDoneTweets()); 
+	//myFsm.process_event(EventDoneTweets()); 
 	
 	//parsear string
 	//crear FSM
