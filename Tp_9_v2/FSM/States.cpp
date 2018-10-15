@@ -30,6 +30,12 @@ SC::result WaitingForTweets::errorReaction(const ErrorEvent & event)
 	return transit<End>();
 }
 
+SC::result WaitingForTweets::quitReaction(const EventQuit & event)
+{
+	//pasarle la lista de tweets a santi
+	return transit<DisplayingTweets>();   //si ya termine paso a mostrar los tweets en la pantalla
+}
+
 
 /*DISPLAYING TWEETS STATE*/
 DisplayingTweets::DisplayingTweets()

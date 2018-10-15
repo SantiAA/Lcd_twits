@@ -7,3 +7,12 @@ TwitterFSM::TwitterFSM()
 	//guardar todos los punteros
 }
 
+TweetHandler * TwitterFSM::getHandler()
+{
+	return handler;
+}
+
+DisplayUpdater * TwitterFSM::getUpdater()
+{
+	return updater;
+}

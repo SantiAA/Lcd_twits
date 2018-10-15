@@ -40,11 +40,13 @@ public:
 	typedef MPL::list <						//lista de eventos que pueden ser recibidos
 		SC::custom_reaction<EventRefresh>,
 		SC::custom_reaction<EventDoneTweets>,
-		SC::custom_reaction<ErrorEvent>
+		SC::custom_reaction<ErrorEvent>,
+		SC::custom_reaction<EventQuit>
 	>reactions;
 	SC::result refreshReaction(const EventRefresh& event);	//reacciones para cada evento
 	SC::result doneReaction(const EventDoneTweets& event);
 	SC::result errorReaction(const ErrorEvent& event);
+	SC::result quitReaction(const EventQuit& event);
 };
 
 class DisplayingTweets : public SC::simple_state<DisplayingTweets, TwitterFSM>

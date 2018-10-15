@@ -8,6 +8,7 @@
 #include"Events.h"
 #include"States.h"
 #include"../TweetHandler.h"
+#include"../DisplayUpdater.h"
 
 namespace SC = boost::statechart;
 
@@ -16,10 +17,13 @@ class InitState;
 class TwitterFSM:public SC::state_machine<TwitterFSM,InitState>
 {
 public:
-	TwitterFSM( ); //recibe tambien puntero a clase de facu, puntero a clase de santi 
-	
+	TwitterFSM( TweetHandler* handler_, DisplayUpdater* updater_); //recibe tambien puntero a clase de facu, puntero a clase de santi 
+	TweetHandler* getHandler();
+	DisplayUpdater* getUpdater();
 
 
 private:
+	TweetHandler* handler;
+	DisplayUpdater* updater;
 	
 };
