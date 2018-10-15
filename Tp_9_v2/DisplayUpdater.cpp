@@ -66,6 +66,35 @@ void DisplayUpdater::repeatTweet()
 	rRate = speed;
 }
 
+void DisplayUpdater::next()
+{
+	if (tweetNum >= internalTweetList.size())
+	{
+		termine = false; // termine de mostrar todos lo tweets
+		lcd->operator<<((const unsigned char *)"   No more         Tweets.");
+	}
+	else
+	{
+		lcd->lcdClear();
+		setNextTweet();
+		rRate = 2 * speed; // le da mas tiempo entre tweet y tweet 
+	}
+}
+
+void DisplayUpdater::prev()
+{
+	if (tweetNum >= 2)
+	{
+		tweetNum-=2; //como tweet num apunta al siguente a mostrar, vuelvo dos para ver el anterior
+		lcd->lcdClear();
+		setNextTweet();
+	}
+	else
+	{
+		this->repeatTweet();
+	}
+}
+
 void DisplayUpdater::refreshDisplay(void)
 {
 	if (rRate - 1 == 0) // me fijo si el contador llego a 0
