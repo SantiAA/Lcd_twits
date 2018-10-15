@@ -1,6 +1,6 @@
 #include "FSM.h"
 
-TwitterFSM::TwitterFSM()
+TwitterFSM::TwitterFSM(TweetHandler* handler_, DisplayUpdater* updater_)
 {
 	(*this).initiate();
 	(*this).process_event(StartEvent());

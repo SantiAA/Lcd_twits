@@ -2,18 +2,18 @@
 using namespace std;
 Error::Error()
 {
-	errorType = ErrType::NO_ERROR;
+	errorType = ErrorType::N_ERROR;
 	errorDetail = string("NO_ERROR DEFAULT STRING");
 }
 
-ErrType Error::getErrType()
+ErrorType Error::getErrType()
 {
 	return errorType;
 }
 
 
 
-void Error::setErrType(ErrType type)
+void Error::setErrType(ErrorType type)
 {
 	errorType = type;
 

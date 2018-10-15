@@ -13,13 +13,15 @@ WaitingForTweets::WaitingForTweets()
 
 SC::result WaitingForTweets::refreshReaction(const EventRefresh & event)
 {
-	//llamar a santi para que haga la animacion de carga
-	//llamar a multi de facu
+	context<TwitterFSM>().getUpdater()->stillWaiting();   //llamar a santi para que haga la animacion de carga
+	context<TwitterFSM>().getHandler()->multiPerform();//llamar a multi de facu
 	return transit<WaitingForTweets>();
 }
 
 SC::result WaitingForTweets::doneReaction(const EventDoneTweets & event)
 {
+	vector<Tweet> temp=context<TwitterFSM>().getHandler()->getTweetsList();
+	context<TwitterFSM>().getUpdater()->setTweets(temp);
 	//pasarle la lista de tweets a santi
 	return transit<DisplayingTweets>();   //si ya termine paso a mostrar los tweets en la pantalla
 }
@@ -45,19 +47,19 @@ DisplayingTweets::DisplayingTweets()
 
 SC::result DisplayingTweets::refreshReaction(const EventRefresh & event)
 {
-	//avisar a santi que paso un tick
+	context<TwitterFSM>().getUpdater()->refreshDisplay();
 	return transit<DisplayingTweets>();
 }
 
 SC::result DisplayingTweets::nextReaction(const EventNext & event)
 {
-	//avisar a santi que tiene que mostrar el sig tweet
+	context<TwitterFSM>().getUpdater();//avisar a santi que tiene que mostrar el sig tweet FALTA!
 	return transit<DisplayingTweets>();
 }
 
 SC::result DisplayingTweets::previousReaction(const EventPrevious & event)
 {
-	//avisar a santi que tiene que mostrar el anterior tweet
+	//avisar a santi que tiene que mostrar el anterior tweetFALTA!
 	return transit<DisplayingTweets>();
 }
 
@@ -69,20 +71,20 @@ SC::result DisplayingTweets::quitReaction(const EventQuit & event)
 
 SC::result DisplayingTweets::repeatReaction(const EventRepeat & event)
 {
-	//avisar a santi que tiene que repetir
+	context<TwitterFSM>().getUpdater()->repeatTweet();//avisar a santi que tiene que repetir
 	return transit<DisplayingTweets>();
 	
 }
 
 SC::result DisplayingTweets::incSpeedReaction(const EventIncSpeed & event)
 {
-	//aumentar la velocidad del timer
+	context<TwitterFSM>().getUpdater()->incSpeed();//aumentar la velocidad del timer
 	return transit<DisplayingTweets>();
 }
 
 SC::result DisplayingTweets::decSpeedReaction(const EventDecSpeed & event)
 {
-	//disminuir la velocidad del timer
+	context<TwitterFSM>().getUpdater()->decSpeed;//disminuir la velocidad del timer
 	return transit<DisplayingTweets>();
 }
 
