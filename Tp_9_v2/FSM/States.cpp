@@ -22,7 +22,6 @@ SC::result WaitingForTweets::doneReaction(const EventDoneTweets & event)
 {
 	vector<Tweet> temp=context<TwitterFSM>().getHandler()->getTweetsList();
 	context<TwitterFSM>().getUpdater()->setTweets(temp);
-	//pasarle la lista de tweets a santi
 	return transit<DisplayingTweets>();   //si ya termine paso a mostrar los tweets en la pantalla
 }
 

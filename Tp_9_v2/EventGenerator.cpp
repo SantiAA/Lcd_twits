@@ -54,6 +54,10 @@ void EventGenerator::generateEvents()
 			FSM->process_event(EventRefresh());
 		}
 	}
+	else if (!FSM->getHandler()->isOk|| !FSM->getUpdater()->isOk())
+	{
+		FSM->process_event(ErrorEvent());
+	}
 	else if (FSM->getUpdater()->finished()) //termine de escribir tweets en display 
 	{
 		FSM->process_event(EventLast());
