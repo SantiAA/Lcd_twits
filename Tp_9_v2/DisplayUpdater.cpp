@@ -7,6 +7,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+BasicLCD * getDisplay();
 
 DisplayUpdater::DisplayUpdater( int fps)
 {
