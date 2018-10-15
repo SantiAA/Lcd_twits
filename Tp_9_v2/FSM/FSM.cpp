@@ -4,6 +4,8 @@ TwitterFSM::TwitterFSM(TweetHandler* handler_, DisplayUpdater* updater_):eventGe
 {
 	(*this).initiate();
 	(*this).process_event(StartEvent());
+	handler = handler_;
+	updater = updater_;
 	//guardar todos los punteros
 }
 
@@ -20,7 +22,6 @@ DisplayUpdater * TwitterFSM::getUpdater()
 void TwitterFSM::step()
 {
 	eventGenerator.generateEvents();
-
 }
 
 bool TwitterFSM::FSMdone()
