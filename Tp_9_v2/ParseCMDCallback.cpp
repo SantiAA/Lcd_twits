@@ -1,33 +1,19 @@
 #include<iostream>
 #include"parseCmd.h"
+#include "ParseCMDCallback.h"
 
 #define INTERNAL_ERROR -1
 
-typedef struct
-{
-	string mode;		//Modo de simulacion pasada por linea de comando
-	int botCount;		//Cantidad de robots pasados por linea de comando	
-	int heigthTiles;	//Cantidad de baldosas en altura pasadas por linea de comando
-	int widthTiles;		//Cantidad de baldosas en ancho pasadas por linea de comando
-	error_t error;		//Estructura de posibles errores de ejecucion   CAMBIAR ESTO
-}userData_t;
 
-typedef struct		//Estructura para informar tipo de error y detalles del error
-{
-	string errStr;
-	unsigned int errorType;
-}error_t;
 
 enum kindOfError {
-	NO_ERROR, NO_MEMORY, INVALID_WH_VALUE, WRONG_WTILES, WRONG_HTILES, WRONG_BCOUNT, WRONG_MODE_INPUT, UNKNOWN_ERROR
-	, UNKNOWN_OPTION, PARAM_ATTEMPT, NO_WTILES, NO_HTILES, NO_BOTCOUNT, NO_MODE_INPUT, AL_INIT_FAIL
-	, PRIMITIVE_FAIL, IMAGE_FAIL, TTF_FAIL, ALLEGRO_DISPLAY_ERROR, ALLEGRO_FONT_ERROR, ALLEGRO_IMAGE_LOAD_ERROR
+	NO_ERROR, UNKNOWN_ERROR, UNKNOWN_OPTION, PARAM_ATTEMPT
 };	//Enum de tipos de errores posibles en la ejecucion
 
 int is_known(const char *key, const char *knownOpt[], int size);
 int strcicmp(char const *a, char const *b);
-int parseCallback(char *key, char *value, void *userData);
- enum Parameters{USER,NUMBER};
+
+enum Parameters { USER, NUMBER };
 
 using namespace std;
 int parseCallback(char *key, char *value, void *userData)
@@ -43,14 +29,14 @@ int parseCallback(char *key, char *value, void *userData)
 			switch (receivedOpt)
 			{
 			case USER:
-				p2Struct->mode = (string)value;
+				p2Struct->usr = (string)value;
 				returnValue = true;
 				break;
 			case NUMBER:
-				p2Struct->botCount = atoi(value);
+				p2Struct->tweetCount = atoi(value);
 				returnValue = true;
 				break;
-			
+
 			default:
 				p2Struct->error.errorType = UNKNOWN_ERROR;
 				p2Struct->error.errStr = "don't know what happened\n";
