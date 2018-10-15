@@ -5,7 +5,7 @@
 #include<boost/statechart/event.hpp>
 #include<boost/statechart/transition.hpp>
 #include<boost/statechart/custom_reaction.hpp>
-#include <boost/context/execution_context.hpp>
+#include"FSM.h"
 #include "Events.h"
 
 namespace SC = boost::statechart; //short name
@@ -23,11 +23,11 @@ class End;
 
 
 
-class InitState : public SC::simple_state<InitState, TwitterFSM>
+class IniState : public SC::simple_state<IniState, TwitterFSM>
 {
 public:
-	InitState();
-	typedef SC::transition<StartEvent, ParsingCMD> reactions;
+	IniState();
+	typedef SC::transition<StartEvent, WaitingForTweets> reactions;
 	
 };
 
@@ -40,11 +40,13 @@ public:
 	typedef MPL::list <						//lista de eventos que pueden ser recibidos
 		SC::custom_reaction<EventRefresh>,
 		SC::custom_reaction<EventDoneTweets>,
-		SC::custom_reaction<ErrorEvent>
-	>reactions;
+		SC::custom_reaction<ErrorEvent>,
+		SC::custom_reaction<EventQuit>
+	>react;
 	SC::result refreshReaction(const EventRefresh& event);	//reacciones para cada evento
 	SC::result doneReaction(const EventDoneTweets& event);
 	SC::result errorReaction(const ErrorEvent& event);
+	SC::result quitReaction(const EventQuit& event);
 };
 
 class DisplayingTweets : public SC::simple_state<DisplayingTweets, TwitterFSM>
@@ -61,7 +63,7 @@ public:
 		SC::custom_reaction<EventDecSpeed>,
 		SC::custom_reaction<EventLast>,
 		SC::custom_reaction<ErrorEvent>
-	>reactions;
+	>react;
 	SC::result refreshReaction(const EventRefresh& event);			//reacciones para cada evento
 	SC::result nextReaction(const EventNext& event);
 	SC::result previousReaction(const EventPrevious& event);

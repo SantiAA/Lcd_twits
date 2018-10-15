@@ -1,38 +1,50 @@
-#include "DisplayUpdater.h"
+ #include "DisplayUpdater.h"
+#include "Display/HD44780LCD.h"
 #include <ctime>
 #include <iomanip>
 #include <sstream>
 #include <iostream>
 
 
+BasicLCD * getDisplay();
 
-
-DisplayUpdater::DisplayUpdater(BasicLCD * display, int fps)
+DisplayUpdater::DisplayUpdater( int fps)
 {
+	BasicLCD * display = getDisplay();
+
 	if (display->lcdInitOk())
 	{
 		lcd = display;
 	}
 	else
 	{
-		posibleErr.set_type(ErrType::LCD_NOT_FOUND);
+		posibleErr.set_type(ErrrType::LCD_NOT_FOUND);
 	}
 	speed = fps/2; //depende de los fps, inicialmente es dos veces por segundo (capaz es mucho)
 	rRate = speed;
 	state = 0;
 	internalTweetList.clear();
 	tweetNum = 0;
+	waitMoving = false;
+	direction = false;
 }
 
 
 DisplayUpdater::~DisplayUpdater()
 {
+	delete lcd;
 }
 
 void DisplayUpdater::setTweets(vector<Tweet>& tweetList)
 {
 	internalTweetList = tweetList;
 	setNextTweet();//guardo el primer tweet para mostrar
+}
+
+void DisplayUpdater::showError(string & error_) // procurar errores de 32 chars
+{
+	lcd->lcdClear();
+	lcd->operator<<((const unsigned char * )error_.c_str());
 }
 
 void DisplayUpdater::incSpeed()
@@ -54,9 +66,37 @@ void DisplayUpdater::repeatTweet()
 	rRate = speed;
 }
 
-bool DisplayUpdater::refreshDisplay(void)
+void DisplayUpdater::next()
 {
-	bool ret = true;
+	if (tweetNum >= internalTweetList.size())
+	{
+		termine = false; // termine de mostrar todos lo tweets
+		lcd->operator<<((const unsigned char *)"   No more         Tweets.");
+	}
+	else
+	{
+		lcd->lcdClear();
+		setNextTweet();
+		rRate = 2 * speed; // le da mas tiempo entre tweet y tweet 
+	}
+}
+
+void DisplayUpdater::prev()
+{
+	if (tweetNum >= 2)
+	{
+		tweetNum-=2; //como tweet num apunta al siguente a mostrar, vuelvo dos para ver el anterior
+		lcd->lcdClear();
+		setNextTweet();
+	}
+	else
+	{
+		this->repeatTweet();
+	}
+}
+
+void DisplayUpdater::refreshDisplay(void)
+{
 	if (rRate - 1 == 0) // me fijo si el contador llego a 0
 	{
 		lcd->lcdClear(); //limprio el display
@@ -68,7 +108,7 @@ bool DisplayUpdater::refreshDisplay(void)
 		{
 			if (tweetNum >= internalTweetList.size())
 			{
-				ret = false; // termine de mostrar todos lo tweets
+				termine = false; // termine de mostrar todos lo tweets
 			}
 			else
 			{
@@ -84,23 +124,60 @@ bool DisplayUpdater::refreshDisplay(void)
 	else
 		rRate--;
 
-	return ret;
-
 }
 
 void DisplayUpdater::setWaiting(std::string accountName)
 {
 	size_t length = accountName.length();
 	lcd->lcdClear();
-	for (size_t i = 0; i < (16 - length) / 2; i++) // para mostrar el nombre centrado
+	if (length <= 16)
 	{
-		lcd->lcdMoveCursorRight();
+		for (size_t i = 0; i < (16 - length) / 2; i++) // para mostrar el nombre centrado
+		{
+			lcd->lcdMoveCursorRight();
+		}
+		lcd->operator<<((const unsigned char *)accountName.c_str());
 	}
-	lcd->operator<<((const unsigned char *)accountName.c_str());
+	else
+	{
+		waitMoving = true;
+		firstLine = accountName;
+		lcd->operator<<((const unsigned char *)firstLine.substr(0,16).c_str());
+		secondLinePos = 1; // lo uso para marcar en que parte estoy
+	}
 }
 
 void DisplayUpdater::stillWaiting(void)
 {
+	if (waitMoving && (rRate == 1)) //Si el nombre es muy largo lo muevo como marquesina
+	{
+		lcd->lcdClear();
+		lcd->operator<<((const unsigned char *)firstLine.substr(secondLinePos, 16).c_str());
+		
+		if (direction) //true derecha
+		{
+			if (secondLinePos >= 1) // todavia tengo para moverme a la derecha
+			{
+				secondLinePos--;
+			}
+			else
+			{
+				direction = !direction;
+			}
+		}
+		else //false izquierda
+		{
+			if (firstLine.length() - secondLinePos - 1 >= 16) // si me quedan mas de 16 caracteres sigo moviendo 
+			{
+				secondLinePos++;
+			}
+			else
+			{
+				direction = !direction;// cambio de direccion
+			}
+		}
+	}
+
 	cursorPosition cur = { 2,0 };
 	if (rRate == 1)
 	{
@@ -212,9 +289,14 @@ void DisplayUpdater::setNextTweet(void)
 	tweetNum++;
 }
 
+bool DisplayUpdater::finished()
+{
+	return !termine;
+}
+
 bool DisplayUpdater::isOk()
 {
-	if (posibleErr.get_type() != ErrType::LCD_NO_ERROR)
+	if (posibleErr.get_type() != ErrrType::LCD_NO_ERROR)
 	{
 		return false;
 	}
@@ -225,4 +307,10 @@ bool DisplayUpdater::isOk()
 std::string DisplayUpdater::getError()
 {
 	return posibleErr.get_description();
+}
+
+
+BasicLCD * getDisplay(void)
+{
+	return new HD44780LCD();
 }

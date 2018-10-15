@@ -56,18 +56,18 @@ FTDIHandler::FTDIHandler()
 					lcdWriteIR(RETHOME); // cursor al adress 0
 					delay(2);
 				}
-				catch ( ErrType type)
+				catch ( ErrrType type)
 				{
-					if (type == ErrType::LCD_NO_ESCRIBE)
+					if (type == ErrrType::LCD_NO_ESCRIBE)
 					{
-						throw ErrType::LCD_CHAGE_MODE_ERROR;
+						throw ErrrType::LCD_CHAGE_MODE_ERROR;
 					}
 					//not abel to set 4 bit mode trow exeption
 				}
 			}
 			else
 			{
-				throw ErrType::LCD_SETTING_ERROR;
+				throw ErrrType::LCD_SETTING_ERROR;
 				//not able to set asynchronous mode trow exeption	
 			}
 		}
@@ -76,7 +76,7 @@ FTDIHandler::FTDIHandler()
 
 	if (status != FT_OK)
 	{
-		throw ErrType::LCD_NOT_FOUND;
+		throw ErrrType::LCD_NOT_FOUND;
 		//trow exeption unable to open the display
 	}
 	
@@ -115,7 +115,7 @@ void FTDIHandler::lcdWriteNibble(uint8_t value )
 	status = FT_Write(deviceHandler, &temp , 1 , &bytesWriten); // dejo que se estabilice los datos y el RS
 	if (status != FT_OK)
 	{
-		throw ErrType::LCD_NO_ESCRIBE;
+		throw ErrrType::LCD_NO_ESCRIBE;
 	}
 	status = !FT_OK;
 	delay(2); // tiempo en milisegundos
@@ -124,7 +124,7 @@ void FTDIHandler::lcdWriteNibble(uint8_t value )
 	status = FT_Write(deviceHandler, &temp , 1, &bytesWriten); // ENABLE en 1 para que tome los datos
 	if (status != FT_OK)
 	{
-		throw ErrType::LCD_NO_ESCRIBE;
+		throw ErrrType::LCD_NO_ESCRIBE;
 		//throw exepction 
 	}
 	status = !FT_OK;
@@ -134,7 +134,7 @@ void FTDIHandler::lcdWriteNibble(uint8_t value )
 	status = FT_Write(deviceHandler, &temp , 1, &bytesWriten); //Deja de tomar datos
 	if (status != FT_OK)
 	{
-		throw ErrType::LCD_NO_ESCRIBE;
+		throw ErrrType::LCD_NO_ESCRIBE;
 		//throw exepction 
 	}
 	status = !FT_OK;
