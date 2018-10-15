@@ -16,6 +16,6 @@ public:
 	void setErrDetail(std::string detail);
 
 private:
-	ErrType errorType;
+	ErrorType errorType;
 	std::string errorDetail;
 };

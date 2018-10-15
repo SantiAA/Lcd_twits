@@ -5,7 +5,7 @@
 #include<boost/statechart/event.hpp>
 #include<boost/statechart/transition.hpp>
 #include<boost/statechart/custom_reaction.hpp>
-#include <boost/context/execution_context.hpp>
+#include"FSM.h"
 #include "Events.h"
 
 namespace SC = boost::statechart; //short name
