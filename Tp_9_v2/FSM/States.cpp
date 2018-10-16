@@ -59,19 +59,19 @@ SC::result DisplayingTweets::react(const EventRefresh & event)
 
 SC::result DisplayingTweets::react(const EventNext & event)
 {
-	context<TwitterFSM>().getUpdater();//avisar a santi que tiene que mostrar el sig tweet FALTA!
+	context<TwitterFSM>().getUpdater()->next();//avisar a santi que tiene que mostrar el sig tweet FALTA!
 	return transit<DisplayingTweets>();
 }
 
 SC::result DisplayingTweets::react(const EventPrevious & event)
 {
-	//avisar a santi que tiene que mostrar el anterior tweetFALTA!
+	context<TwitterFSM>().getUpdater()->prev();//avisar a santi que tiene que mostrar el sig tweet FALTA!
 	return transit<DisplayingTweets>();
 }
 
 SC::result DisplayingTweets::react(const EventQuit & event)
 {
-	//avisar a santi que apague todo,
+	context<TwitterFSM>().done = true;
 	return transit<End>();
 }
 
