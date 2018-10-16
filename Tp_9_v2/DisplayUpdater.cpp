@@ -41,7 +41,10 @@ DisplayUpdater::~DisplayUpdater()
 void DisplayUpdater::setTweets(vector<Tweet>& tweetList)
 {
 	internalTweetList = tweetList;
-	setNextTweet();//guardo el primer tweet para mostrar
+	if (!internalTweetList.empty())
+	{
+		setNextTweet();//guardo el primer tweet para mostrar
+	}
 }
 
 void DisplayUpdater::showError(string & error_) // procurar errores de 32 chars
@@ -330,6 +333,11 @@ std::string DisplayUpdater::getError()
 	return posibleErr.get_description();
 }
 
+void DisplayUpdater::ultimoTweet()
+{
+	lcd->lcdClear();
+	lcd->operator<<((const unsigned char *)"Ultimo Tweet");
+}
 
 BasicLCD * getDisplay(void)
 {

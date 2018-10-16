@@ -5,7 +5,6 @@ using namespace std;
 /*INIT STATE*/
 IniState::IniState()
 {
-	cout << "Init State"<<endl;
 }
 SC::result IniState::react(const StartEvent & event)
 {
@@ -14,7 +13,6 @@ SC::result IniState::react(const StartEvent & event)
 /* WAITING FOR TWEETS  STATE*/
 WaitingForTweets::WaitingForTweets()
 {
-	cout << "Waiting for tweets" << endl;
 }
 
 SC::result WaitingForTweets::react(const EventRefresh & event)
@@ -33,15 +31,20 @@ SC::result WaitingForTweets::react(const EventDoneTweets & event)
 
 SC::result WaitingForTweets::react(const ErrorEvent & event)
 {
+	if (!context<TwitterFSM>().getHandler()->isOk())
+	{
+		string err = context<TwitterFSM>().getHandler()->getError().getErrDetail(); //ver que hacer aca!!!!
+		context<TwitterFSM>().getUpdater()->showError(err);
+	}
+	context<TwitterFSM>().toggleDone();
 	
-	//setear clase error adentro de fsm con la info
 	return transit<End>();
 }
 
 SC::result WaitingForTweets::react(const EventQuit & event)
 {
-	//pasarle la lista de tweets a santi
-	return transit<DisplayingTweets>();   //si ya termine paso a mostrar los tweets en la pantalla
+	context<TwitterFSM>().toggleDone();
+	return transit<End>();   //si apretan q mientras estoy descargando tweets cierro
 }
 
 
@@ -96,6 +99,7 @@ SC::result DisplayingTweets::react(const EventDecSpeed & event)
 
 SC::result DisplayingTweets::react(const EventLast & event)
 {
+	context<TwitterFSM>().toggleDone();
 	return transit<End>();
 }
 
@@ -103,14 +107,15 @@ SC::result DisplayingTweets::react(const ErrorEvent & event)
 {
 	if (!context<TwitterFSM>().getHandler()->isOk())
 	{
-		URLError err= context<TwitterFSM>().getHandler()->getError(); //ver que hacer aca!!!!
+		string err= context<TwitterFSM>().getHandler()->getError().getErrDetail(); //ver que hacer aca!!!!
+		context<TwitterFSM>().getUpdater()->showError(err);
 	}
+	context<TwitterFSM>().toggleDone();
 	return transit<End>();
 }
 
 /*END STATE*/
 End::End()
 {
-	cout << "End" << endl;
 }
 

@@ -28,7 +28,8 @@ public:
 	void stillWaiting(void);// esta es la que va a ir moviendo la señal
 	
 	bool finished();
-	
+	void ultimoTweet();
+
 	bool isOk(void);
 	std::string getError();
 	

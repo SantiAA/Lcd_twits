@@ -8,6 +8,7 @@
 #include"ParseCMD.h"
 #include "ParseCMDCallback.h"
 #include "EventGenerator.h"
+#include "Display/delay.h"
 namespace po = boost::program_options;
 using namespace std;
 
@@ -41,7 +42,12 @@ int main(int argc, char*argv[])
 		generator.generateEvents();
 	}
 	
+	if (updater.finished())
+	{
+		updater.ultimoTweet();
+	}
 	
+	delay(5000);
 	std::cout << "Termino\n";
 	
 	//buscar errores
