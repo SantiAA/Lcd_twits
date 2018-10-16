@@ -96,6 +96,7 @@ vector<Tweet> TweetHandler::getTweetsList()
 
 			tweetsList.push_back(Tweet(tweet, twitter, tweetedAt));
 		}
+		
 		return tweetsList;
 	}
 	catch (exception& e)

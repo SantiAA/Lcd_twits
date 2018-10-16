@@ -4,7 +4,9 @@
 #include <iomanip>
 #include <sstream>
 #include <iostream>
+#define _CRT_SECURE_NO_WARNINGS 1
 
+#pragma warning(disable:4996) // para que no tiere el warning de visual pq no le gusta gmtime
 
 BasicLCD * getDisplay();
 
@@ -20,13 +22,14 @@ DisplayUpdater::DisplayUpdater( int fps)
 	{
 		posibleErr.set_type(ErrrType::LCD_NOT_FOUND);
 	}
-	speed = fps/2; //depende de los fps, inicialmente es dos veces por segundo (capaz es mucho)
+	speed = fps; //depende de los fps, inicialmente es dos veces por segundo (capaz es mucho)
 	rRate = speed;
 	state = 0;
 	internalTweetList.clear();
 	tweetNum = 0;
 	waitMoving = false;
 	direction = false;
+	termine = false;
 }
 
 
@@ -49,15 +52,15 @@ void DisplayUpdater::showError(string & error_) // procurar errores de 32 chars
 
 void DisplayUpdater::incSpeed()
 {
-	speed++;
+	if ( (speed * 0.9)  > 1) // no puedo tener menos velocidad
+	{
+		speed -= speed * 0.1;
+	}
 }
 
 void DisplayUpdater::decSpeed()
 {
-	if (speed > 1) // no puedo tener menos velocidad
-	{
-		speed--;
-	}
+	speed += speed * 0.1;
 }
 
 void DisplayUpdater::repeatTweet()
@@ -70,7 +73,7 @@ void DisplayUpdater::next()
 {
 	if (tweetNum >= internalTweetList.size())
 	{
-		termine = false; // termine de mostrar todos lo tweets
+		termine = true; // termine de mostrar todos lo tweets
 		lcd->operator<<((const unsigned char *)"   No more         Tweets.");
 	}
 	else
@@ -99,8 +102,11 @@ void DisplayUpdater::refreshDisplay(void)
 {
 	if (rRate - 1 == 0) // me fijo si el contador llego a 0
 	{
-		lcd->lcdClear(); //limprio el display
-		lcd->operator<<((const unsigned char *)firstLine.c_str()); // imprimo la fecha
+		cursorPosition cur = { 2,0 };
+
+		lcd->lcdSetCursorPosition(cur);
+		lcd->lcdClearToEOL();
+
 		std::string temp(secondLine.substr(secondLinePos, 16)); //agarro 16 caracteres
 		lcd->operator<< ((const unsigned char *)temp.c_str());
 		secondLinePos++;
@@ -108,7 +114,7 @@ void DisplayUpdater::refreshDisplay(void)
 		{
 			if (tweetNum >= internalTweetList.size())
 			{
-				termine = false; // termine de mostrar todos lo tweets
+				termine = true; // termine de mostrar todos lo tweets
 			}
 			else
 			{
@@ -145,6 +151,15 @@ void DisplayUpdater::setWaiting(std::string accountName)
 		lcd->operator<<((const unsigned char *)firstLine.substr(0,16).c_str());
 		secondLinePos = 1; // lo uso para marcar en que parte estoy
 	}
+
+	cursorPosition cur = { 2,0 };
+	
+	lcd->lcdSetCursorPosition(cur);
+	lcd->lcdClearToEOL();
+	lcd->operator<<((const unsigned char *) "Waiting");
+	state++;
+
+
 }
 
 void DisplayUpdater::stillWaiting(void)
@@ -186,19 +201,19 @@ void DisplayUpdater::stillWaiting(void)
 		switch (state)
 		{
 		case 0:
-			lcd->operator<<((const unsigned char *) "   Waiting");
+			lcd->operator<<((const unsigned char *) "Waiting");
 			state++;
 			break;
 		case 1:
-			lcd->operator<<((const unsigned char *) "   Waiting.");
+			lcd->operator<<((const unsigned char *) "Waiting.");
 			state++;
 			break;
 		case 2:
-			lcd->operator<<((const unsigned char *) "   Waiting..");
+			lcd->operator<<((const unsigned char *) "Waiting..");
 			state++;
 			break;
 		case 3:
-			lcd->operator<<((const unsigned char *) "   Waiting...");
+			lcd->operator<<((const unsigned char *) "Waiting...");
 			state = 0;
 			break;
 		default:
@@ -206,7 +221,7 @@ void DisplayUpdater::stillWaiting(void)
 			state = 0;
 			break;
 		}
-		rRate = speed;
+		rRate = speed/10;
 	}
 	else
 		rRate--;
@@ -263,10 +278,11 @@ void DisplayUpdater::setNextTweet(void)
 	content.erase(content.find_last_of(' ') - 5, 5); // le saco la parte del uso horario
 	
 	stringstream time(content.c_str());
-	tm firstAtemp = {};
+	struct tm firstAtemp = {};
 	time >> std::get_time(&firstAtemp, "%a %b %d %H:%M:%S %Y"); // ver si tengo el ultimo espacio
 	time_t horario = mktime(&firstAtemp);
 
+	content = internalTweetList[tweetNum].getTweetedAt();
 	name = content.substr(content.find_last_of(' ') - 5, 5); // cambio dependiendo del uso horario
 	if (name[0] == '+')
 	{
@@ -279,19 +295,23 @@ void DisplayUpdater::setNextTweet(void)
 	else
 		std::cout << "le estoy errando" << std::endl;
 	
-	firstAtemp = *gmtime(&horario);
-	char buffer[16];
+	firstAtemp = *localtime(&horario);
+	char buffer[17];
 
-	strftime(buffer, 16, "%D - %R",&firstAtemp);
+	strftime(buffer, 17, "%d/%m/%y - %H:%M",&firstAtemp);
 	
 	firstLine = string(buffer);
 	secondLinePos = 0;
 	tweetNum++;
+
+	lcd->lcdClear(); //limprio el display
+	lcd->operator<<((const unsigned char *)firstLine.c_str()); // imprimo la fecha
+
 }
 
 bool DisplayUpdater::finished()
 {
-	return !termine;
+	return termine;
 }
 
 bool DisplayUpdater::isOk()

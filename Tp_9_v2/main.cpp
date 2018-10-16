@@ -7,6 +7,7 @@
 #include"TweetHandler.h"
 #include"ParseCMD.h"
 #include "ParseCMDCallback.h"
+#include "EventGenerator.h"
 namespace po = boost::program_options;
 using namespace std;
 
@@ -19,16 +20,29 @@ int main(int argc, char*argv[])
 	{
 		//error
 	}
+	
 	TweetHandler handler((char*)(userData.usr.c_str()),userData.tweetCount);
+	if (!handler.isOk())
+	{
+		cout << handler.getError().getErrDetail() << endl;
+		return 0;
+	}
+	handler.createTwitterToken();
+	handler.setUpTwitterConnection();
+	handler.multiPerform();
+
 	DisplayUpdater updater;
 	updater.setWaiting(userData.usr);
 	TwitterFSM myFsm(&handler,&updater);
+	EventGenerator generator(&myFsm);
+	
 	while (!myFsm.FSMdone())
 	{
-		myFsm.step();
+		generator.generateEvents();
 	}
 	
 	
+	std::cout << "Termino\n";
 	
 	//buscar errores
 	//Done!

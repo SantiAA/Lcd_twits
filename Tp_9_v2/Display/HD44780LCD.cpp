@@ -9,6 +9,7 @@
 #define LCD_FIRST_POS 0
 #define LCD_LAST_POS 31
 #define LSN_MASK(x) ((x) & (0x0F)) //mask less significand nybble of a 8 bit number
+
 HD44780LCD::HD44780LCD(): err()
 {
 	try
@@ -232,9 +233,10 @@ bool HD44780LCD::lcdSetCursorPosition(const cursorPosition pos)
 			error = true;
 		}
 	}
-	if (pos.column < (LSN_MASK(cadd)) && !error) // si debo moverme a la izquierda
+	if (pos.column < (cadd >= 16 ? cadd-16:cadd) && !error) // si debo moverme a la izquierda
 	{
-		for (int i = 0; i < LSN_MASK(cadd) - pos.column && !error; i++)
+		int j = (cadd >= 16 ? cadd - 16 : cadd);
+		for (int i = 0; i < (j - pos.column) && !error; i++)
 		{
 			if (!lcdMoveCursorLeft())
 			{
@@ -242,9 +244,10 @@ bool HD44780LCD::lcdSetCursorPosition(const cursorPosition pos)
 			}
 		}
 	}
-	else if( pos.column > LSN_MASK(cadd) && !error) // a la derecha
+	else if( pos.column > (cadd >= 16 ? cadd - 16 : cadd) && !error) // a la derecha
 	{
-		for (int i = 0; i < pos.column - LSN_MASK(cadd) && !error; i++)
+		int j = (cadd >= 16 ? cadd - 16 : cadd);
+		for (int i = 0; i < pos.column - j && !error; i++)
 		{
 			if (!lcdMoveCursorRight())
 			{

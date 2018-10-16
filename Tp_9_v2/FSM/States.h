@@ -13,13 +13,29 @@ namespace MPL = boost::mpl;
 
 
 class TwitterFSM;//foward declarations
-class InitState;
+class IniState;
 class ParsingCMD;
 class WaitingForTweets;
 class ParsingJSON;
 class DisplayingTweets;
 class End;
 
+class TwitterFSM :public SC::state_machine<TwitterFSM, IniState>
+{
+public:
+	TwitterFSM(TweetHandler* handler_, DisplayUpdater* updater_); //recibe tambien puntero a clase de facu, puntero a clase de santi 
+	TweetHandler* getHandler();
+	DisplayUpdater* getUpdater();
+	//void step();
+	bool FSMdone();
+
+
+private:
+	TweetHandler* handler;
+	DisplayUpdater* updater;
+	//EventGenerator eventGenerator;
+	bool done;
+};
 
 
 
@@ -27,10 +43,9 @@ class IniState : public SC::simple_state<IniState, TwitterFSM>
 {
 public:
 	IniState();
-	typedef SC::transition<StartEvent, WaitingForTweets> reactions;
-	
+	typedef SC::custom_reaction<StartEvent> reactions;
+	SC::result react(const StartEvent& event);
 };
-
 
 
 class WaitingForTweets : public SC::simple_state<WaitingForTweets, TwitterFSM>
@@ -42,11 +57,11 @@ public:
 		SC::custom_reaction<EventDoneTweets>,
 		SC::custom_reaction<ErrorEvent>,
 		SC::custom_reaction<EventQuit>
-	>react;
-	SC::result refreshReaction(const EventRefresh& event);	//reacciones para cada evento
-	SC::result doneReaction(const EventDoneTweets& event);
-	SC::result errorReaction(const ErrorEvent& event);
-	SC::result quitReaction(const EventQuit& event);
+	>reactions;
+	SC::result react(const EventRefresh& event);	//reacciones para cada evento
+	SC::result react(const EventDoneTweets& event);
+	SC::result react(const ErrorEvent& event);
+	SC::result react(const EventQuit& event);
 };
 
 class DisplayingTweets : public SC::simple_state<DisplayingTweets, TwitterFSM>
@@ -63,16 +78,16 @@ public:
 		SC::custom_reaction<EventDecSpeed>,
 		SC::custom_reaction<EventLast>,
 		SC::custom_reaction<ErrorEvent>
-	>react;
-	SC::result refreshReaction(const EventRefresh& event);			//reacciones para cada evento
-	SC::result nextReaction(const EventNext& event);
-	SC::result previousReaction(const EventPrevious& event);
-	SC::result quitReaction(const EventQuit& event);
-	SC::result repeatReaction(const EventRepeat& event);
-	SC::result incSpeedReaction(const EventIncSpeed& event);
-	SC::result decSpeedReaction(const EventDecSpeed& event);
-	SC::result lastReaction(const EventLast& event);
-	SC::result errorReaction(const ErrorEvent& event);
+	>reactions;
+	SC::result react(const EventRefresh& event);			//reacciones para cada evento
+	SC::result react(const EventNext& event);
+	SC::result react(const EventPrevious& event);
+	SC::result react(const EventQuit& event);
+	SC::result react(const EventRepeat& event);
+	SC::result react(const EventIncSpeed& event);
+	SC::result react(const EventDecSpeed& event);
+	SC::result react(const EventLast& event);
+	SC::result react(const ErrorEvent& event);
 
 
 };
