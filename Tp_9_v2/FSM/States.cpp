@@ -51,7 +51,6 @@ SC::result WaitingForTweets::react(const EventQuit & event)
 /*DISPLAYING TWEETS STATE*/
 DisplayingTweets::DisplayingTweets()
 {
-	cout << "Displaying tweets" << endl;
 }
 
 SC::result DisplayingTweets::react(const EventRefresh & event)
