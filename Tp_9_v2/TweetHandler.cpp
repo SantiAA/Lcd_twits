@@ -96,13 +96,12 @@ vector<Tweet> TweetHandler::getTweetsList()
 
 			tweetsList.push_back(Tweet(tweet, twitter, tweetedAt));
 		}
-		
 		return tweetsList;
 	}
 	catch (exception& e)
 	{
 		err.setErrType(ErrType::CHILD_ERROR);
-		err.setErrDetail("Exception raised while parsing Twitter's JSON.");
+		err.setErrDetail("User Not found.");
 		return vector<Tweet>();
 	}
 }

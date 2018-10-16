@@ -157,6 +157,7 @@ void DisplayUpdater::setWaiting(std::string accountName)
 	lcd->lcdSetCursorPosition(cur);
 	lcd->lcdClearToEOL();
 	lcd->operator<<((const unsigned char *) "Waiting");
+	rRate = speed / 5;
 	state++;
 
 
@@ -193,7 +194,7 @@ void DisplayUpdater::stillWaiting(void)
 		}
 	}
 
-	cursorPosition cur = { 2,0 };
+	cursorPosition cur = { 2,7 };
 	if (rRate == 1)
 	{
 		lcd->lcdSetCursorPosition(cur);
@@ -201,19 +202,19 @@ void DisplayUpdater::stillWaiting(void)
 		switch (state)
 		{
 		case 0:
-			lcd->operator<<((const unsigned char *) "Waiting");
+			lcd->operator<<((const unsigned char *) " ");
 			state++;
 			break;
 		case 1:
-			lcd->operator<<((const unsigned char *) "Waiting.");
+			lcd->operator<<((const unsigned char *) ".");
 			state++;
 			break;
 		case 2:
-			lcd->operator<<((const unsigned char *) "Waiting..");
+			lcd->operator<<((const unsigned char *) "..");
 			state++;
 			break;
 		case 3:
-			lcd->operator<<((const unsigned char *) "Waiting...");
+			lcd->operator<<((const unsigned char *) "...");
 			state = 0;
 			break;
 		default:
@@ -221,7 +222,7 @@ void DisplayUpdater::stillWaiting(void)
 			state = 0;
 			break;
 		}
-		rRate = speed/10;
+		rRate = speed/5;
 	}
 	else
 		rRate--;
