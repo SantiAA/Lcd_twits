@@ -30,3 +30,8 @@ bool TwitterFSM::FSMdone()
 {
 	return done;
 }
+
+void TwitterFSM::toggleDone()
+{
+	done = !done;
+}

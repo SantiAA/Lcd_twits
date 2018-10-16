@@ -71,7 +71,7 @@ SC::result DisplayingTweets::react(const EventPrevious & event)
 
 SC::result DisplayingTweets::react(const EventQuit & event)
 {
-	context<TwitterFSM>().done = true;
+	context<TwitterFSM>().toggleDone();
 	return transit<End>();
 }
 
@@ -101,7 +101,10 @@ SC::result DisplayingTweets::react(const EventLast & event)
 
 SC::result DisplayingTweets::react(const ErrorEvent & event)
 {
-	//setear clase error adentro de fsm con la info
+	if (!context<TwitterFSM>().getHandler()->isOk())
+	{
+		URLError err= context<TwitterFSM>().getHandler()->getError(); //ver que hacer aca!!!!
+	}
 	return transit<End>();
 }
 

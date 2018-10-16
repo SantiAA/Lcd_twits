@@ -28,6 +28,7 @@ public:
 	DisplayUpdater* getUpdater();
 	//void step();
 	bool FSMdone();
+	void toggleDone();
 
 
 private:
