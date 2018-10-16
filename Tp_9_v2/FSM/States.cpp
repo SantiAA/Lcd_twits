@@ -71,7 +71,7 @@ SC::result DisplayingTweets::react(const EventPrevious & event)
 
 SC::result DisplayingTweets::react(const EventQuit & event)
 {
-	context<TwitterFSM>().done = true;
+	//context<TwitterFSM>().done = true;
 	return transit<End>();
 }
 
